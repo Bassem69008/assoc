@@ -1,0 +1,74 @@
+version: '3'
+
+services:
+###> doctrine/doctrine-bundle ###
+  ###> BDD ###
+  database:
+    container_name: ${PROJECT_NAME}_database
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3301:3306"
+    networks:
+      - my-network
+    restart: 'always'
+    volumes:
+      - type: volume
+        source: db_data
+        target: /var/lib/mysql:rw
+
+      # Service phpMyAdmin
+  phpmyadmin:
+    container_name: ${PROJECT_NAME}_phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+    ports:
+      - "8085:80"
+    links:
+      - database
+    networks:
+      - my-network
+      # Service php ######
+  php:
+    container_name: ${PROJECT_NAME}_php
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    ports:
+      - "8084:80"
+    restart: 'always'
+    links:
+      - database
+    networks:
+      - my-network
+    volumes:
+      - ./:/var/www/
+
+###> Mailcatcher ###
+  mailcatcher:
+    container_name: ${PROJECT_NAME}_mailcatcher
+    image: schickling/mailcatcher
+    ports:
+      - "1025:1025"
+      - "1080:1080"
+    networks:
+      - my-network
+
+networks:
+  my-network:
+
+
+      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
+      # - ./docker/db/data:/var/lib/postgresql/data:rw
+###< doctrine/doctrine-bundle ###
+
+volumes:
+###> doctrine/doctrine-bundle ###
+  db_data:
+###< doctrine/doctrine-bundle ###
