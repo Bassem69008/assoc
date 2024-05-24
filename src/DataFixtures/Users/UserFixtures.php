@@ -3,30 +3,30 @@
 namespace App\DataFixtures\Users;
 
 use App\Entity\Users\User;
-use App\Factory\Users\UserBackFactory;
+use App\Factory\Users\UserFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class UserBackFixtures extends Fixture
+class UserFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
         /***  Fix Admin User ***/
-        UserBackFactory::createOne([
+        UserFactory::createOne([
             'email' => 'admin@example.com',
             'roles' => ['ROLE_ADMIN'],
             'isVerified' => true,
         ]);
 
         /* Back Editor */
-        UserBackFactory::createOne([
+        UserFactory::createOne([
             'email' => 'editor@example.com',
             'roles' => ['ROLE_EDITOR'],
             'isVerified' => true,
         ]);
 
         /* Back ACCOUNTANT */
-        UserBackFactory::createOne([
+        UserFactory::createOne([
             'email' => 'accountant@example.com',
             'roles' => ['ROLE_ACCOUNTANT'],
             'isVerified' => true,

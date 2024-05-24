@@ -27,6 +27,9 @@ RUN composer config --global preferred-install dist
 # Copy application files
 COPY . /var/www/
 
+# Change owner to www-data
+RUN chown -R www-data:www-data /var/www/
+
 # Modify default Apache configuration
 COPY ./docker/apache.conf /etc/apache2/sites-available/000-default.conf
 
@@ -38,6 +41,3 @@ WORKDIR /var/www/
 
 # Expose port 80
 EXPOSE 80
-
-# Optionally, run Composer install
-#RUN cd /var/www && composer install
