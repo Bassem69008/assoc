@@ -1,0 +1,24 @@
+{% if href|default %}
+<a
+        class="button button--{{ modifier|default('primary') }} {{ href|default ? 'button--link' }}"
+        href="{{ href }}"
+        {{ disabled|default ? 'disabled' }}
+        {{ swup|default ? 'data-swup-animation=' ~ swup }}
+>
+    {% else %}
+    <button
+            class="button button--{{ modifier|default('primary') }}"
+            {{ disabled|default ? 'disabled' }}
+            {{ form|default ? 'form=' ~ form }}
+            {{ onClick|default ? '@click=' ~ onClick }}
+            type="{{ type|default('button') }}"
+    >
+        {% endif %}
+        {% block leftContent %}{% endblock %}
+        {{ label|default('Label button') }}
+        {% block rightContent %}{% endblock %}
+        {% if href is not defined %}
+    </button>
+    {% else %}
+</a>
+{% endif %}

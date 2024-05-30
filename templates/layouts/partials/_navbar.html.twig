@@ -16,7 +16,6 @@
         </li>
     </ul>
 
-
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
 
@@ -60,13 +59,23 @@
             </div>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link text-white text-sm d-flex justify-content-around">
-                <i class="nav-icon fas fa-user mr-1 mt-1"></i>
-                <p>
-                    {{ app.user.lastname }} {{ app.user.firstname }}
-                </p>
-            </a>
+<div class="btn-group">
+    <a href="#" class="nav-link text-white text-sm d-flex justify-content-around dropdown-toggle"
+       data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false"
+    >
+        <i class="nav-icon fas fa-user mr-1 mt-1"></i>
+        <p>
+            {{ app.user.lastName }} {{ app.user.firstName }}
+        </p>
+    </a>
+    <div class="dropdown-menu dropdown-menu-lg-right">
+        <a href="#" class="dropdown-item" type="button">Mon compte</a>
+        <a href="{{ path('app_logout') }}" class="dropdown-item" type="button">Me déconnecter</a>
+    </div>
+
+</div>
         </li>
     </ul>
+
 </nav>
 <!-- /.navbar -->
