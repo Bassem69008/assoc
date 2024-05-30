@@ -16,6 +16,26 @@ security:
             lazy: true
             provider: app_user_bo_provider
             custom_authenticator: App\Security\UserAuthenticator
+            user_checker: App\Security\AccountIsActiveUserChecker
+
+            ### login_link entry point ###
+            login_link:
+                # The route to consume the link with user signature parameters (see below).
+                check_route: app_login_check
+                # Properties used to create a signed URL that uniquely identifies the user.
+                signature_properties: [ 'id', 'email', 'password' ]
+                # only allow the link to be used 3 times.
+                max_uses: 3
+                # Avoid email providers and browsers 'preview of the links' to be counted as ONE use.
+                check_post_only: true
+                # lifetime in seconds (1800 seconds = 30 minutes).
+                lifetime: 1800
+                # When the login link FAILED, redirect to the login page to try their email and password.
+                login_path: app_login
+                # When the login link SUCCEEDED, use the success handler to redirect the user to the reset_password page.
+                # The access control (see below) avoids users without the suitable token
+                # to access the reset_password page.
+                success_handler: App\Handler\ResetPasswordSuccessHandler
             logout:
                 path: app_logout
                 # where to redirect after logout

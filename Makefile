@@ -35,8 +35,8 @@ start:
 
 # build and (re)start all containers
 build: .env.local
-	@docker-compose --env-file ./.env.local build --no-cache --pull;
-	@docker-compose --env-file ./.env.local up -d --force-recreate --build;
+	@docker-compose build --no-cache --pull;
+	@docker-compose  up -d --force-recreate --build;
 
 
 # stop all running containers

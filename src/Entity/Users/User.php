@@ -45,6 +45,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     protected ?bool $isVerified = false;
 
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
+    }
+
     public function getLastName(): ?string
     {
         return $this->lastName;
@@ -109,7 +115,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * A visual identifier that represents this user.
+     * A visual identifier that represents this users.
      *
      * @see UserInterface
      */
@@ -130,7 +136,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_U
+        // guarantee every users at least has ROLE_U
         $roles[] = 'ROLE_BO';
 
         return \array_unique($roles);

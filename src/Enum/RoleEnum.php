@@ -12,4 +12,5 @@ enum RoleEnum: string
     case ROLE_ACCOUNTANT = 'ROLE_ACCOUNTANT';
     case ROLE_EDITOR = 'ROLE_EDITOR';
     case ROLE_ADMIN = 'ROLE_ADMIN';
+    case ROLE_TEACHER = 'ROLE_TEACHER';
 }

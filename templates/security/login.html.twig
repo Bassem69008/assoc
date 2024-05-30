@@ -1,4 +1,3 @@
-{% extends 'base.html.twig' %}
 
 {% block title %}Log in!{% endblock %}
 
@@ -34,4 +33,7 @@
         Sign in
     </button>
 </form>
+    <div class="sign-in__links">
+        <a href="{{ path('app_forgot_password') }}">Mot de passe oublié </a>
+    </div>
 {% endblock %}
