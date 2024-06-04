@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+env:
+  APP_ENV: test
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ./
+
+jobs:
+  tests:
+    name: "Tests"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup PHP 8.3 with composer v2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          tools: composer:v2
+          coverage: xdebug
+
+      - uses: actions/checkout@v2
+
+      # —— Composer 🧙‍️ —————————————————————————————————————————————————————————
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            www/bin/.phpunit
+            www/vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Add Github token
+        run: composer global config github-oauth.github.com "$GIT_TOKEN_AUTH"
+
+      - name: Install dependencies
+        if: steps.composer-cache.outputs.cache-hit != 'true'
+        run: |
+          COMPOSER_MEMORY_LIMIT=-1 composer install --optimize-autoloader --no-scripts --no-interaction --no-progress --prefer-dist
+          ./bin/phpunit --version
+
+      # —— Symfony 🎵 ——————————————————————————————————————————————————————————
+      - name: Verify database
+        run: |
+          php bin/console doctrine:database:create
+          php bin/console doctrine:schema:create
+          php bin/console doctrine:fixtures:load -n
+
+      ## —— Coding standards ✨ ————————————————————————————————————————————————
+      - name: Coding standards checks (PHP CS Fixer)
+        run: composer run-script cs-fixer-ci
+
+      ## —— Tests ✅ ———————————————————————————————————————————————————————————
+      - name: Coding standards checks (PHPStan)
+        run: composer run-script phpstan
+
+      - name: Run test suite (PHPUnit)
+        run:  COMPOSER_MEMORY_LIMIT=-1 composer run-script test
