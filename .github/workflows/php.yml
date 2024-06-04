@@ -1,50 +1,57 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
+    branches: [main]
+
+env:
+  APP_ENV: test
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ./
 
 jobs:
-  build:
-
+  tests:
+    name: "Tests"
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: symfony_test
-        ports:
-          - 3302:3306
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Setup PHP 8.3 with composer v2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          tools: composer:v2
 
-      - name: Set up Docker Compose
-        run: docker-compose -f compose.yaml up -d
+      - uses: actions/checkout@v2
 
-      - name: Run Composer
-        run: docker-compose exec php composer install
+      - name: Validate composer.json and composer.lock
+        run: composer validate
 
-      - name: Run Tests
-        run: docker-compose exec php bin/phpunit
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            bin/.phpunit
+            vendor
 
+      - name: Install dependencies
+        if: steps.composer-cache.outputs.cache-hit != 'true'
+        run: |
+          COMPOSER_MEMORY_LIMIT=-1 composer install --optimize-autoloader --no-scripts --no-interaction --no-progress --prefer-dist
+          ./bin/phpunit --version
       - name: Verify database
         run: |
-          docker-compose exec php bin/console doctrine:database:create
-          docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction
-          docker-compose exec php bin/console doctrine:fixtures:load -n
+          php bin/console doctrine:database:create
+          php bin/console doctrine:schema:create
+          php bin/console doctrine:fixtures:load -n
+      - name: Coding standards checks (PHP CS Fixer)
+        run: composer cs-fixer-ci
 
-      - name: Tear down Docker Compose
-        run: docker-compose -f docker-compose.test.yml down
+      - name: Coding standards checks (PHPStan)
+        run: composer phpstan
+
+      - name: Run test suite (PHPUnit)
+        run:  COMPOSER_MEMORY_LIMIT=-1 composer test

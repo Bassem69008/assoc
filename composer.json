@@ -86,11 +86,23 @@
             "assets:install %PUBLIC_DIR%": "symfony-cmd",
             "importmap:install": "symfony-cmd"
         },
+        "cs-fixer": [
+            "./vendor/bin/php-cs-fixer fix"
+        ],
+        "cs-fixer-ci": [
+            "./vendor/bin/php-cs-fixer fix --dry-run"
+        ],
+        "phpstan": [
+            "./vendor/bin/phpstan analyse -c .phpstan.neon --memory-limit=-1"
+            ],
         "post-install-cmd": [
             "@auto-scripts"
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "test": [
+            "APP_ENV=test ./bin/phpunit"
         ]
     },
     "conflict": {
