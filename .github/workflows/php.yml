@@ -1,57 +1,48 @@
-name: CI
+name: Docker Symfony CI
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
-    branches: [main]
-
-env:
-  APP_ENV: test
-
-defaults:
-  run:
-    shell: bash
-    working-directory: ./
+    branches: [ main ]
 
 jobs:
-  tests:
-    name: "Tests"
+  build:
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Setup PHP 8.3 with composer v2
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.3"
-          tools: composer:v2
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
+    steps:
       - uses: actions/checkout@v2
 
-      - name: Validate composer.json and composer.lock
-        run: composer validate
+      - name: Build the Docker image
+        run: docker-compose -f compose.yaml build
 
-      - name: Cache Composer packages
-        id: composer-cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            bin/.phpunit
-            vendor
+      - name: Validate composer.json and composer.lock
+        run: docker-compose -f compose.yaml run php composer validate
 
       - name: Install dependencies
-        if: steps.composer-cache.outputs.cache-hit != 'true'
-        run: |
-          COMPOSER_MEMORY_LIMIT=-1 composer install --optimize-autoloader --no-scripts --no-interaction --no-progress --prefer-dist
-          ./bin/phpunit --version
+        run: docker-compose -f compose.yaml run php composer install --prefer-dist --no-progress --no-suggest
+
       - name: Verify database
         run: |
           php bin/console doctrine:database:create
           php bin/console doctrine:schema:create
           php bin/console doctrine:fixtures:load -n
+
       - name: Coding standards checks (PHP CS Fixer)
         run: composer cs-fixer-ci
 
-      - name: Coding standards checks (PHPStan)
-        run: composer phpstan
+      - name: Run PHPStan
+        run: docker-compose -f compose.yaml run php vendor/bin/phpstan analyse
 
-      - name: Run test suite (PHPUnit)
-        run:  COMPOSER_MEMORY_LIMIT=-1 composer test
+      - name: Run PHP CS Fixer
+        run: docker-compose -f docker-compose.yaml run php vendor/bin/php-cs-fixer fix --dry-run --diff
+
+      - name: Run PHPUnit tests
+        run: docker-compose -f docker-compose.yaml run php vendor/bin/phpunit
