@@ -30,6 +30,8 @@ jobs:
         run: docker-compose -f compose.yaml run php composer install --prefer-dist --no-progress --no-suggest
 
       - name: Verify database
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           php bin/console doctrine:database:create
           php bin/console doctrine:schema:create
@@ -45,4 +47,6 @@ jobs:
         run: docker-compose -f docker-compose.yaml run php vendor/bin/php-cs-fixer fix --dry-run --diff
 
       - name: Run PHPUnit tests
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: docker-compose -f docker-compose.yaml run php vendor/bin/phpunit
