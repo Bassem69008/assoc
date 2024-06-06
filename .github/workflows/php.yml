@@ -38,9 +38,9 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          docker-compose exec run php bin/console doctrine:database:create
-          docker-compose exec run php  bin/console doctrine:m:m -n
-          docker-compose exec run php  bin/console doctrine:fixtures:load -n
+          docker-compose  run  --rm php bin/console doctrine:database:create
+          docker-compose  run --rm php  bin/console doctrine:m:m -n
+          docker-compose  run --rm  php  bin/console doctrine:fixtures:load -n
 
       - name: Coding standards checks (PHP CS Fixer)
         run: composer cs-fixer-ci
