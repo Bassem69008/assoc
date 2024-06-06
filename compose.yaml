@@ -1,8 +1,6 @@
 version: '3'
 
 services:
-###> doctrine/doctrine-bundle ###
-  ###> BDD ###
   database:
     container_name: ${PROJECT_NAME}_database
     image: mysql:8.0
@@ -21,7 +19,6 @@ services:
         source: db_data
         target: /var/lib/mysql:rw
 
-      # Service phpMyAdmin
   phpmyadmin:
     container_name: ${PROJECT_NAME}_phpmyadmin
     image: phpmyadmin/phpmyadmin
@@ -34,7 +31,7 @@ services:
       - database
     networks:
       - my-network
-      # Service php ######
+
   php:
     container_name: ${PROJECT_NAME}_php
     build:
@@ -45,12 +42,16 @@ services:
     restart: 'always'
     links:
       - database
+      - selenium
     networks:
       - my-network
     volumes:
       - ./:/var/www/
+    environment:
+      - APP_ENV=dev
+      - PANTHER_NO_HEADLESS=1
+      - PANTHER_SELENIUM_SERVER_URL=http://selenium:4444/wd/hub
 
-###> Mailcatcher ###
   mailcatcher:
     container_name: ${PROJECT_NAME}_mailcatcher
     image: schickling/mailcatcher
@@ -60,15 +61,15 @@ services:
     networks:
       - my-network
 
+  selenium:
+    image: selenium/standalone-firefox
+    ports:
+      - "4444:4444"
+    networks:
+      - my-network
+
 networks:
   my-network:
 
-
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
-###< doctrine/doctrine-bundle ###
-
 volumes:
-###> doctrine/doctrine-bundle ###
   db_data:
-###< doctrine/doctrine-bundle ###

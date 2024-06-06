@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+{% block title_page %}
+    <h2>Détails Famille</h2>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6 justify-content-center">
+                 <div class="card">
+                    <div class="card-header">
+                        <fieldset>
+                            <h2>Informations</h2>
+                        </fieldset>
+                    </div>
+                    <div class="card-body">
+                        <div class="col">
+                            <h3>Nom: {{ user.familyname }}</h3>
+                        </div>
+                        <div class="col">
+                            Email: {{ user.email }}
+                        </div>
+                        <div class="col">
+                            Addresse: {{ user.address }}
+                        </div>
+                        <div class="col">
+                            Ville: {{ user.city }}
+                        </div>
+                        <div class="col">
+                            Code postal: {{ user.zipcode }}
+                        </div>
+                        <div class="col">
+                            Pays: {{ user.country }}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

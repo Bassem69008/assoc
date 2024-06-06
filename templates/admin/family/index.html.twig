@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Famille{% endblock %}
+{% block title_page %}
+    <h2 class="my-auto pl-5">
+        <i class="fa fa-users"></i>
+        Liste des familles
+    </h2>
+{% endblock %}
+{% block body %}
+
+    <div class="container m-5 p-5 bg-white ">
+        {% for flashMessage in app.session.flashbag.get('error') %}
+
+            {{ flashMessage }}
+
+        {% endfor %}
+        <div class="">
+            <a href="{{ path('family_create') }}" class="btn btn-info text-white  right-0 bottom-5   mb-2 ">
+                <i class="fa fa-plus"></i>
+                AJOUTER
+            </a>
+        </div>
+        <table id="table-user" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Téléphone</th>
+                <th>Email</th>
+                <th>Date de création</th>
+                <th>Edition</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for family in families %}
+                <tr>
+                    <td>{{ family.familyname }}</td>
+                    <td>{{ family.phone }}</td>
+                    <td>{{ family.email }}</td>
+
+                    <td>{{ family.createdAt|date('d-m-Y') }}</td>
+                    <td class="d-flex justify-content-around">
+                        <a href="{{ path('family_show',{id:family.id}) }}" class="btn btn-info">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                        <a href="{{ path('family_edit',{id:family.id}) }}" class="btn btn-warning">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal{{ family.id }}">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                        <!------ Component Delete Modal ------>
+                        <twig:delete-modal
+
+                                modal_id='{{ 'deleteModal' ~ family.id }}'
+                                modal_title='Supprimer Utilisateur'
+                                modal_body='Êtes-vous sûr de vouloir supprimer {{ family.familyname }}?'
+                                delete_action='{{ path('family_delete',{id:family.id})}} '
+                                csrf_token='{{ csrf_token('delete' ~ family.id) }}'
+                        />
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+
+        </table>
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(document).ready(function() {
+            $('#table-user').DataTable({
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/French.json"
+                },
+                "pageLength": 10
+            });
+        });
+    </script>
+{% endblock %}
