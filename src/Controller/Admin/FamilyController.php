@@ -37,7 +37,7 @@ class FamilyController extends AbstractController
         }
 
         return $this->render('admin/family/show.html.twig', [
-            'user' => $this->familyRepository->find($family->getId()),
+            'family' => $this->familyRepository->find($family->getId()),
         ]);
     }
 

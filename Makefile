@@ -116,5 +116,8 @@ run-tests-with-coverage: # run tests with coverage
 cc:
 	@symfony console cache:clear --no-optional-warmers;
 
+update-permissions: ## Fix permissions
+	@docker-compose exec php chown 1000:1000 -R .
+
 
 

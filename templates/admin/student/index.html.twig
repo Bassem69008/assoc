@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Famille{% endblock %}
+{% block title_page %}
+    <h2 class="my-auto pl-5">
+        <i class="fa fa-users"></i>
+        Liste des Élèves
+    </h2>
+{% endblock %}
+{% block body %}
+
+    <div class="container-fluid my-5 mx-auto p-5 bg-white ">
+        {% for flashMessage in app.session.flashbag.get('error') %}
+            {{ flashMessage }}
+        {% endfor %}
+        <div class="">
+            <a href="{{ path('student_create') }}" class="btn btn-info text-white right-0 bottom-5 mb-2">
+                <i class="fa fa-plus"></i>
+                AJOUTER
+            </a>
+        </div>
+        {% set headers = ['id','Genre','Nom', 'Prénom', 'Date de naissance','Date de création', 'Edition'] %}
+        {% set rows = [] %}
+        {% for student in students %}
+            {% set rows = rows|merge([{
+                'id': student.id,
+                'gender': student.gender,
+                'lastName': student.lastName,
+                'firstName': student.firstName,
+                'birthDate': student.birthDate|date('d-m-Y'),
+                'createdAt': student.createdAt|date('d-m-Y'),
+                'item': student,
+                'path_delete': path('student_delete', {'id': student.id}),
+                'path_show': path('student_show', {'id': student.id}),
+                'path_edit': path('student_edit', {'id': student.id})
+
+            }]) %}
+
+        {% endfor %}
+        {% include 'components/table.html.twig' with {
+            'table_id': 'table-user',
+            'headers': headers,
+            'rows': rows
+
+        } %}
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(document).ready(function() {
+            $('#table-user').DataTable({
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/French.json"
+                },
+                "pageLength": 10
+            });
+        });
+    </script>
+{% endblock %}

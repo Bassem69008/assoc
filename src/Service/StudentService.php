@@ -2,18 +2,18 @@
 
 namespace App\Service;
 
-use App\Entity\Family;
-use App\Form\CreateFamilyType;
-use App\Repository\FamilyRepository;
+use App\Entity\Student;
+use App\Form\StudentType;
+use App\Repository\StudentRepository;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 
-class FamilyService
+class StudentService
 {
     public function __construct(
         private FormFactoryInterface $formFactory,
-        private FamilyRepository $familyRepository,
+        private StudentRepository $studentRepository,
     ) {
     }
 
@@ -22,12 +22,12 @@ class FamilyService
      */
     public function create(Request $request): array
     {
-        $family = new Family();
-        $form = $this->formFactory->create(CreateFamilyType::class, $family);
+        $student = new Student();
+        $form = $this->formFactory->create(StudentType::class, $student);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             // Créer et associer les étudiants
-            $this->attachStudents($family);
+            $this->studentRepository->save($student);
 
             return ['isSuccess' => true];
         }
@@ -41,14 +41,14 @@ class FamilyService
     /**
      * @return array<string, bool|FormView>
      */
-    public function edit(Request $request, Family $family): array
+    public function edit(Request $request, Student $student): array
     {
-        $form = $this->formFactory->create(CreateFamilyType::class, $family);
+        $form = $this->formFactory->create(StudentType::class, $student);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Créer et associer les étudiants
-            $this->attachStudents($family);
+            $this->studentRepository->save($student);
 
             return ['isSuccess' => true];
         }
@@ -57,14 +57,5 @@ class FamilyService
             'isSuccess' => false,
             'form' => $form->createView(),
         ];
-    }
-
-    private function attachStudents(Family $family): void
-    {
-        foreach ($family->getStudents() as $student) {
-            $student->setFamily($family);
-        }
-        // Enregistrer la famille
-        $this->familyRepository->save($family);
     }
 }

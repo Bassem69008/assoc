@@ -1,0 +1,39 @@
+<table id="{{ table_id }}" class="table table-striped table-bordered" style="width:100%">
+    <thead>
+    <tr>
+        {% for header in headers %}
+            <th>{{ header }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for row in rows %}
+        <tr>
+            {% for key, cell in row %}
+            {% if key not in ['path_delete', 'path_show', 'path_edit', 'item'] %}
+                <td>{{ cell }}</td>
+            {% endif %}
+            {% endfor %}
+            <td class="d-flex justify-content-around">
+                <a href="{{ row.path_show }}" class="btn btn-info">
+                    <i class="fa-solid fa-eye"></i>
+                </a>
+                <a href="{{ row.path_edit }}" class="btn btn-warning">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal{{ row.id }}">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+
+                {% include 'components/delete-modal.html.twig' with {
+                    modal_id: 'deleteModal' ~ row.id,
+                    modal_title: 'Supprimer Utilisateur',
+                    modal_body: 'Êtes-vous sûr de vouloir supprimer ' ~ row.lastName ~ '?',
+                    delete_action: row.path_delete,
+                    csrf_token: csrf_token('delete' ~ row.id)
+                } %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

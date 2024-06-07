@@ -66,11 +66,9 @@ final class FamilyFactory extends ModelFactory
             'address' => self::faker()->address(),
             'city' => 'Lyon',
             'country' => 'France',
-            'createdAt' => self::faker()->dateTime(),
             'email' => self::faker()->email(),
             'familyName' => self::faker()->lastName(),
             'phone' => self::faker()->phoneNumber(),
-            'updatedAt' => self::faker()->dateTime(),
             'zipCode' => self::faker()->postcode(),
         ];
     }

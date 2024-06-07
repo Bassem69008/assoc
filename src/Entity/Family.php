@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\FamilyRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -40,10 +42,17 @@ class Family
     #[Assert\NotBlank(message: 'Please enter your email address')]
     private ?string $email = null;
 
+    /**
+     * @var Collection<int, Student>
+     */
+    #[ORM\OneToMany(targetEntity: Student::class, mappedBy: 'family', orphanRemoval: true, cascade: ['persist', 'remove'])]
+    private Collection $students;
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
+        $this->students = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -131,6 +140,36 @@ class Family
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Student>
+     */
+    public function getStudents(): Collection
+    {
+        return $this->students;
+    }
+
+    public function addStudent(Student $student): static
+    {
+        if (!$this->students->contains($student)) {
+            $this->students->add($student);
+            $student->setFamily($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStudent(Student $student): static
+    {
+        if ($this->students->removeElement($student)) {
+            // set the owning side to null (unless already changed)
+            if ($student->getFamily() === $this) {
+                $student->setFamily(null);
+            }
+        }
 
         return $this;
     }
