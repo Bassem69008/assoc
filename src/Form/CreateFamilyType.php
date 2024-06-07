@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Family;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -74,12 +75,24 @@ class CreateFamilyType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('submit', SubmitType::class, [
+
+            ->add('students', CollectionType::class, [
+                'entry_type' => CollectionStudentType::class,
+                'entry_options' => ['label' => false],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'prototype' => true,
+                'label' => false,
                 'attr' => [
-                    'class' => 'btn btn-primary',
+                    'class' => 'my-selector ',
                 ],
-                'label' => 'Enregistrer',
             ])
+           ->add('submit', SubmitType::class, [
+               'attr' => [
+                   'class' => 'btn btn-primary',
+               ],
+               'label' => 'Enregistrer',
+           ])
         ;
     }
 
