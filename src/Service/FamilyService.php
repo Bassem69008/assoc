@@ -3,8 +3,10 @@
 namespace App\Service;
 
 use App\Entity\Family;
+use App\Entity\ParentEntity;
 use App\Form\CreateFamilyType;
 use App\Repository\FamilyRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +16,7 @@ class FamilyService
     public function __construct(
         private FormFactoryInterface $formFactory,
         private FamilyRepository $familyRepository,
+        private EntityManagerInterface $entityManager
     ) {
     }
 
@@ -23,6 +26,7 @@ class FamilyService
     public function create(Request $request): array
     {
         $family = new Family();
+        $this->attachParents($family);
         $form = $this->formFactory->create(CreateFamilyType::class, $family);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -66,5 +70,16 @@ class FamilyService
         }
         // Enregistrer la famille
         $this->familyRepository->save($family);
+    }
+
+    private function attachParents(Family $family): void
+    {
+        $parent1 = new ParentEntity();
+        $parent2 = new ParentEntity();
+        $family->addParentEntity($parent1);
+        $family->addParentEntity($parent2);
+
+        // Persist the Family entity
+        $this->entityManager->persist($family);
     }
 }

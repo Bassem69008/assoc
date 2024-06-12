@@ -19,7 +19,6 @@
 
                     <div class="card-body">
                         <div class="row">
-
                             <div class="col-lg-6">
                                 {{ form_row(form.familyName) }}
                             </div>
@@ -48,7 +47,31 @@
             </div>
         </div>
 
+        <!--################ PARENTS BLOC ##################### -->
 
+        <div class="card">
+            <div class="card-header bg-info m-0">
+                <h5>Parents</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for parent in form.parentEntities |slice(0,2) %}
+                        <div class="col-lg-6">
+                            <h5>Parent {{ loop.index }}</h5>
+                            {{ form_row(parent.gender) }}
+                            {{ form_row(parent.lastName) }}
+                            {{ form_row(parent.firstName) }}
+                            {{ form_row(parent.email) }}
+                            {{ form_row(parent.phone) }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+
+
+        <!--################ CHILDS BLOC ##################### -->
         <div class="card">
             <div class="card-header bg-info m-0">
                 <h5>Enfants</h5>
@@ -62,7 +85,7 @@
                      data-prototype="{{ form_widget(form.students.vars.prototype)|e('html_attr') }}">
 
                     {% for student in form.students %}
-                        <div class="col">{{ form_row(student.genre) }}</div>
+                        <div class="col">{{ form_row(student.gender) }}</div>
                         <div class="col">{{ form_row(student.lastname) }}</div>
                         <div class="col">{{ form_row(student.firstname) }}</div>
                         <div class="col">{{ form_row(student.birthdate) }}</div>

@@ -48,11 +48,19 @@ class Family
     #[ORM\OneToMany(targetEntity: Student::class, mappedBy: 'family', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $students;
 
+    /**
+     * @var Collection<int, ParentEntity>
+     */
+    #[ORM\OneToMany(targetEntity: ParentEntity::class, mappedBy: 'family', orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[Assert\Count(max: 2, maxMessage : 'You can specify a maximum of 2 parents')]
+    private Collection $parentEntities;
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
         $this->students = new ArrayCollection();
+        $this->parentEntities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -168,6 +176,39 @@ class Family
             // set the owning side to null (unless already changed)
             if ($student->getFamily() === $this) {
                 $student->setFamily(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ParentEntity>
+     */
+    public function getParentEntities(): Collection
+    {
+        return $this->parentEntities;
+    }
+
+    public function addParentEntity(ParentEntity $parentEntity): static
+    {
+        if (\count($this->parentEntities) > 2) {
+            throw new \LogicException('Cannot add more than 2 parent entities to a family.');
+        }
+        if (!$this->parentEntities->contains($parentEntity)) {
+            $this->parentEntities->add($parentEntity);
+            $parentEntity->setFamily($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParentEntity(ParentEntity $parentEntity): static
+    {
+        if ($this->parentEntities->removeElement($parentEntity)) {
+            // set the owning side to null (unless already changed)
+            if ($parentEntity->getFamily() === $this) {
+                $parentEntity->setFamily(null);
             }
         }
 

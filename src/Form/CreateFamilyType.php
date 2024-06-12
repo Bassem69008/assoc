@@ -87,6 +87,14 @@ class CreateFamilyType extends AbstractType
                     'class' => 'my-selector ',
                 ],
             ])
+
+            ->add('parentEntities', CollectionType::class, [
+                'entry_type' => CollectionParentType::class,
+                'entry_options' => ['label' => false],
+                'attr' => [
+                    'class' => 'my-selector ',
+                ],
+            ])
            ->add('submit', SubmitType::class, [
                'attr' => [
                    'class' => 'btn btn-primary',
