@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Édition d'une Famille{% endblock %}
+{% block title %}Création d'une famille{% endblock %}
 {% block title_page %}
     <h2 class="my-auto pl-5">
         <i class="fa fa-user"></i>
-        Édition d'une Famille
+        Création d'une famille
     </h2>
 {% endblock %}
 {% block body %}
@@ -19,7 +19,6 @@
 
                     <div class="card-body">
                         <div class="row">
-
                             <div class="col-lg-6">
                                 {{ form_row(form.familyName) }}
                             </div>
@@ -48,7 +47,31 @@
             </div>
         </div>
 
+        <!--################ PARENTS BLOC ##################### -->
 
+        <div class="card">
+            <div class="card-header bg-info m-0">
+                <h5>Parents</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for parent in form.parentEntities |slice(0,2) %}
+                        <div class="col-lg-6">
+                            <h5>Parent {{ loop.index }}</h5>
+                            {{ form_row(parent.gender) }}
+                            {{ form_row(parent.lastName) }}
+                            {{ form_row(parent.firstName) }}
+                            {{ form_row(parent.email) }}
+                            {{ form_row(parent.phone) }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+
+
+        <!--################ CHILDS BLOC ##################### -->
         <div class="card">
             <div class="card-header bg-info m-0">
                 <h5>Enfants</h5>
@@ -56,27 +79,23 @@
             <div class="card-body">
 
                 <!-- START OF THE COLLECTION HOLDER -->
-                {% for student in form.students %}
-                    <div class="row new-form mb-3">
-                        <div class="col-lg-2">{{ form_row(student.gender) }}</div>
-                        <div class="col-lg-2">{{ form_row(student.lastName) }}</div>
-                        <div class="col-lg-2">{{ form_row(student.firstName) }}</div>
-                        <div class="col-lg-2">{{ form_row(student.birthDate) }}</div>
-                        <div class="col-lg-4 d-flex justify-content-between">
-                            <!-- Placeholder for the delete button -->
-                            <button type="button" class="btn btn-danger delete-embedded-form mb-3">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                {% endfor %}
+
                 <div class="tags"
                      data-index="{{ form.students|length > 0 ? form.students|last.vars.name + 1 : 0 }}"
                      data-prototype="{{ form_widget(form.students.vars.prototype)|e('html_attr') }}">
 
+                    {% for student in form.students %}
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <h4 class="col-lg-12 text-info">Enfant {{ loop.index}} </h4>
+                                <div class="col-lg-3">{{ form_row(student.gender) }}</div>
+                                <div class="col-lg-3">{{ form_row(student.lastName) }}</div>
+                                <div class="col-lg-3">{{ form_row(student.firstName) }}</div>
+                                <div class="col-lg-3">{{ form_row(student.birthDate) }}</div>
+                            </div>
+                        </div>
 
-
-
+                    {% endfor %}
                 </div>
 
                 <!-- END OF THE COLLECTION HOLDER -->
@@ -109,15 +128,14 @@
                 // Remplacez les placeholders '__name__' dans le prototype par l'index actuel
                 newForm.innerHTML = collectionHolder.getAttribute('data-prototype').replace(/__name__/g, index);
                 const childNumber = document.createElement('h5');
-                childNumber.classList.add('col-lg-12');
                 childNumber.textContent = 'Enfant ' + (parseInt(index) + 1);
                 newForm.prepend(childNumber);
 
                 // Ajoutez la classe 'row' à chaque div ayant un ID qui commence par "create_family_students_"
                 newForm.querySelectorAll('div[id^="create_family_students_"]').forEach(function (element) {
-                    element.classList.add('row');
-                    //element.classList.add('d-flex');
-                    //element.classList.add('justify-content-between');
+                    element.classList.add('col-lg-12');
+                    element.classList.add('d-flex');
+                    element.classList.add('justify-content-between');
 
                     // Ajoutez un bouton de suppression à chaque ligne du formulaire enfant
                     const deleteButton = document.createElement('button');
@@ -132,7 +150,7 @@
                     element.appendChild(deleteButton);
 
                     element.querySelectorAll('div[class^="mb-3"]').forEach(function (field) {
-                        field.classList.add('col-lg-3');
+                        field.classList.add('col-lg-2');
                     })
                 });
 
@@ -143,24 +161,6 @@
                 // Incrémentez l'index de la collection
                 collectionHolder.dataset.index++;
             }
-
-            // Add delete button functionality to existing forms
-            document.querySelectorAll('.delete-embedded-form').forEach(function(button) {
-                button.addEventListener('click', function() {
-                    button.closest('.new-form').remove();
-                });
-            });
-        });
-
-        const oldForm = document.querySelectorAll('.tags');
-
-        oldForm.forEach(function (form) {
-            console.log(form);
-            form.querySelectorAll('.delete-embedded-form').forEach(function (button) {
-                button.addEventListener('click', function () {
-                    button.closest('.new-form').remove();
-                });
-            });
         });
 
 

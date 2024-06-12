@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Parents{% endblock %}
+{% block title_page %}
+    <h2 class="my-auto pl-5">
+        <i class="fa fa-users"></i>
+        Liste des Parents
+    </h2>
+{% endblock %}
+{% block body %}
+
+    <div class="container-fluid my-5 mx-auto p-5 bg-white ">
+        {% for flashMessage in app.session.flashbag.get('error') %}
+            {{ flashMessage }}
+        {% endfor %}
+        <div class="">
+            <a href="{{ path('parent_create') }}" class="btn btn-info text-white right-0 bottom-5 mb-2">
+                <i class="fa fa-plus"></i>
+                AJOUTER
+            </a>
+        </div>
+        {% set headers = ['id','Genre','Nom', 'Prénom', 'Email','Téléphone','Date de création', 'Edition'] %}
+        {% set rows = [] %}
+        {% for parent in parents %}
+            {% set rows = rows|merge([{
+                'id': parent.id,
+                'gender': parent.gender,
+                'lastName': parent.lastName,
+                'firstName': parent.firstName,
+                'email': parent.email,
+                'phone': parent.phone,
+                'createdAt': parent.createdAt|date('d-m-Y'),
+                'item': parent,
+                'path_delete': path('parent_delete', {'id': parent.id}),
+                'path_show': path('parent_show', {'id': parent.id}),
+                'path_edit': path('parent_edit', {'id': parent.id})
+
+            }]) %}
+
+        {% endfor %}
+        {% include 'components/table.html.twig' with {
+            'table_id': 'table-user',
+            'headers': headers,
+            'rows': rows
+
+        } %}
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(document).ready(function() {
+            $('#table-user').DataTable({
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/French.json"
+                },
+                "pageLength": 10
+            });
+        });
+    </script>
+{% endblock %}
