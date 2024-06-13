@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\ParentEntityRepository;
+use App\Repository\TeacherRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
-#[ORM\Entity(repositoryClass: ParentEntityRepository::class)]
-class ParentEntity
+#[ORM\Entity(repositoryClass: TeacherRepository::class)]
+class Teacher
 {
     use TimestampableEntity;
     #[ORM\Id]
@@ -15,7 +15,7 @@ class ParentEntity
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 1)]
+    #[ORM\Column(length: 255)]
     private ?string $gender = null;
 
     #[ORM\Column]
@@ -24,15 +24,11 @@ class ParentEntity
     #[ORM\Column]
     private ?string $firstName = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column]
     private ?string $email = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column]
     private ?string $phone = null;
-
-    #[ORM\ManyToOne(inversedBy: 'parentEntities')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Family $family = null;
 
     public function __construct()
     {
@@ -98,21 +94,9 @@ class ParentEntity
         return $this->phone;
     }
 
-    public function setPhone(?string $phone): static
+    public function setPhone(string $phone): static
     {
         $this->phone = $phone;
-
-        return $this;
-    }
-
-    public function getFamily(): ?Family
-    {
-        return $this->family;
-    }
-
-    public function setFamily(?Family $family): static
-    {
-        $this->family = $family;
 
         return $this;
     }
