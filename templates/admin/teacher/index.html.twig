@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Enseignants{% endblock %}
+{% block title_page %}
+    <h2 class="my-auto pl-5">
+        <i class="fa fa-users"></i>
+        Liste des Enseignants
+    </h2>
+{% endblock %}
+{% block body %}
+
+    <div class="container-fluid my-5 mx-auto p-5 bg-white ">
+        {% for flashMessage in app.session.flashbag.get('error') %}
+            {{ flashMessage }}
+        {% endfor %}
+        <div class="">
+            <a href="{{ path('teacher_create') }}" class="btn btn-info text-white right-0 bottom-5 mb-2">
+                <i class="fa fa-plus"></i>
+                AJOUTER
+            </a>
+        </div>
+        {% set headers = ['id','Genre','Nom', 'Prénom', 'Email','Téléphone','Date de création', 'Edition'] %}
+        {% set rows = [] %}
+        {% for teacher in teachers %}
+            {% set rows = rows|merge([{
+                'id': teacher.id,
+                'gender': teacher.gender,
+                'lastName': teacher.lastName,
+                'firstName': teacher.firstName,
+                'email': teacher.email,
+                'phone': teacher.phone,
+                'createdAt': teacher.createdAt|date('d-m-Y'),
+                'item': teacher,
+                'path_delete': path('teacher_delete', {'id': teacher.id}),
+                'path_show': path('teacher_show', {'id': teacher.id}),
+                'path_edit': path('teacher_edit', {'id': teacher.id})
+
+            }]) %}
+
+        {% endfor %}
+        {% include 'components/table.html.twig' with {
+            'table_id': 'table-user',
+            'headers': headers,
+            'rows': rows
+
+        } %}
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(document).ready(function() {
+            $('#table-user').DataTable({
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/French.json"
+                },
+                "pageLength": 10
+            });
+        });
+    </script>
+{% endblock %}
