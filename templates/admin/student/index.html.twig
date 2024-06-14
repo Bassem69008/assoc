@@ -30,6 +30,8 @@
                 'birthDate': student.birthDate|date('d-m-Y'),
                 'createdAt': student.createdAt|date('d-m-Y'),
                 'item': student,
+                'delete_key':student.lastName,
+                'delete_type': 'Élève',
                 'path_delete': path('student_delete', {'id': student.id}),
                 'path_show': path('student_show', {'id': student.id}),
                 'path_edit': path('student_edit', {'id': student.id})
@@ -37,7 +39,7 @@
             }]) %}
 
         {% endfor %}
-        {% include 'components/table.html.twig' with {
+        {% include 'components/table-listing.html.twig' with {
             'table_id': 'table-user',
             'headers': headers,
             'rows': rows

@@ -10,7 +10,7 @@
     {% for row in rows %}
         <tr>
             {% for key, cell in row %}
-            {% if key not in ['path_delete', 'path_show', 'path_edit', 'item'] %}
+            {% if key not in ['path_delete', 'path_show', 'path_edit', 'item','delete_key','delete_type'] %}
                 <td>{{ cell }}</td>
             {% endif %}
             {% endfor %}
@@ -27,8 +27,8 @@
 
                 {% include 'components/delete-modal.html.twig' with {
                     modal_id: 'deleteModal' ~ row.id,
-                    modal_title: 'Supprimer Utilisateur',
-                    modal_body: 'Êtes-vous sûr de vouloir supprimer ' ~ row.lastName ~ '?',
+                    modal_title: 'Supprimer ' ~ row.delete_type,
+                    modal_body: 'Êtes-vous sûr de vouloir supprimer ' ~ row.delete_key ~ '?',
                     delete_action: row.path_delete,
                     csrf_token: csrf_token('delete' ~ row.id)
                 } %}

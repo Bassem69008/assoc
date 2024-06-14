@@ -31,6 +31,7 @@
                 'phone': parent.phone,
                 'createdAt': parent.createdAt|date('d-m-Y'),
                 'item': parent,
+                'delete_key':parent.lastName,
                 'path_delete': path('parent_delete', {'id': parent.id}),
                 'path_show': path('parent_show', {'id': parent.id}),
                 'path_edit': path('parent_edit', {'id': parent.id})
@@ -38,7 +39,7 @@
             }]) %}
 
         {% endfor %}
-        {% include 'components/table.html.twig' with {
+        {% include 'components/table-listing.html.twig' with {
             'table_id': 'table-user',
             'headers': headers,
             'rows': rows
