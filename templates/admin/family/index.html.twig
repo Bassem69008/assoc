@@ -52,7 +52,7 @@
                         <twig:delete-modal
 
                                 modal_id='{{ 'deleteModal' ~ family.id }}'
-                                modal_title='Supprimer Utilisateur'
+                                modal_title='Supprimer Une famille'
                                 modal_body='Êtes-vous sûr de vouloir supprimer {{ family.familyname }}?'
                                 delete_action='{{ path('family_delete',{id:family.id})}} '
                                 csrf_token='{{ csrf_token('delete' ~ family.id) }}'

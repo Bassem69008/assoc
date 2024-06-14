@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Création d'une Classe{% endblock %}
+{% block title_page %}
+    <h2 class="my-auto pl-5">
+        <i class="fa fa-user"></i>
+        {% if editMode %}
+            Modification d'une Classe
+            {% else %}
+            Création d'une Classe
+        {% endif %}
+
+    </h2>
+{% endblock %}
+{% block body %}
+
+    <div class="container-fluid mt-5 p-5 bg-white ">
+        {{ form_start(form) }}
+        <div class="row">
+            <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header bg-info m-0">
+                    <h2>Informations</h2>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        {{ form_row(form.name) }}
+                    </div>
+                    <div class="col-lg-6">
+                        {{ form_row(form.startHour) }}
+                    </div>
+                    <div class="col-lg-6">
+                        {{ form_row(form.endHour) }}
+                    </div>
+                    <div class="col-lg-6">
+                        {{ form_row(form.teacher) }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-info">
+            {% if editMode %}
+                Modifier
+            {% else %}
+                Ajouter
+            {% endif %}
+        </button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

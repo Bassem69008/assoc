@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TeacherRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
@@ -30,10 +32,17 @@ class Teacher
     #[ORM\Column]
     private ?string $phone = null;
 
+    /**
+     * @var Collection<int, Classroom>
+     */
+    #[ORM\OneToMany(targetEntity: Classroom::class, mappedBy: 'teacher')]
+    private Collection $classrooms;
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
+        $this->classrooms = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -97,6 +106,36 @@ class Teacher
     public function setPhone(string $phone): static
     {
         $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Classroom>
+     */
+    public function getClassrooms(): Collection
+    {
+        return $this->classrooms;
+    }
+
+    public function addClassroom(Classroom $classroom): static
+    {
+        if (!$this->classrooms->contains($classroom)) {
+            $this->classrooms->add($classroom);
+            $classroom->setTeacher($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClassroom(Classroom $classroom): static
+    {
+        if ($this->classrooms->removeElement($classroom)) {
+            // set the owning side to null (unless already changed)
+            if ($classroom->getTeacher() === $this) {
+                $classroom->setTeacher(null);
+            }
+        }
 
         return $this;
     }
