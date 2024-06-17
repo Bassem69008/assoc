@@ -57,7 +57,7 @@ class TeacherController extends AbstractController
     #[Route('/{id}/remove', name: 'delete', methods: ['GET', 'POST', 'DELETE'])]
     public function delete(Request $request, Teacher $teacher, CsrfTokenManagerInterface $csrfTokenManager): Response
     {
-        $token = $request->request->get('_token');
+        $token = (string) $request->request->get('_token');
 
         if ($csrfTokenManager->isTokenValid(new CsrfToken('delete'.$teacher->getId(), $token))) {
             $this->teacherRepository->remove($teacher);

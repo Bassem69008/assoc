@@ -18,6 +18,10 @@ class UserTest extends KernelTestCase
         self::bootKernel();
         $this->validator = self::getContainer()->get(ValidatorInterface::class);
         $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
+
+        // Assert to help PHPStan understand that these properties are set
+        assert($this->validator instanceof ValidatorInterface);
+        assert($this->entityManager instanceof EntityManagerInterface);
     }
 
     public static function getUser(): User
@@ -37,7 +41,7 @@ class UserTest extends KernelTestCase
         foreach ($errors as $error) {
             $messages[] = $error->getPropertyPath().'=>'.$error->getMessage();
         }
-        $this->assertCount($expectedErrorsNumber, $errors, implode(', ', $messages));
+        $this->assertCount($expectedErrorsNumber, $errors, \implode(', ', $messages));
     }
 
     public function testValidEntity(): void
@@ -48,7 +52,7 @@ class UserTest extends KernelTestCase
     public function testInvalidEntityEmptyAttributes(): void
     {
         $this->assertEntityHasErrors(self::getUser()->setFirstName(''), 1);
-        $this->assertEntityHasErrors(self::getUser()->setLastname(''), 1);
+        $this->assertEntityHasErrors(self::getUser()->setLastName(''), 1);
         $this->assertEntityHasErrors(self::getUser()->setEmail(''), 1);
     }
 

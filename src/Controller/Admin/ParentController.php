@@ -70,7 +70,7 @@ class ParentController extends AbstractController
     #[Route('/{id}/remove', name: 'delete', methods: ['GET', 'POST', 'DELETE'])]
     public function delete(Request $request, ParentEntity $parent, CsrfTokenManagerInterface $csrfTokenManager): Response
     {
-        $token = $request->request->get('_token');
+        $token = (string) $request->request->get('_token');
 
         if ($csrfTokenManager->isTokenValid(new CsrfToken('delete'.$parent->getId(), $token))) {
             $this->ParentEntityRepository->remove($parent);
