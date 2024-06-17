@@ -32,6 +32,7 @@
                 'createdAt': parent.createdAt|date('d-m-Y'),
                 'item': parent,
                 'delete_key':parent.lastName,
+                'delete_type': 'Parent',
                 'path_delete': path('parent_delete', {'id': parent.id}),
                 'path_show': path('parent_show', {'id': parent.id}),
                 'path_edit': path('parent_edit', {'id': parent.id})
