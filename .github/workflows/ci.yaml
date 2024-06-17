@@ -1,0 +1,79 @@
+name: Pipeline-CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: oulfa
+        ports:
+          - 3303:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Cache PHP setup
+        id: cache-php-setup
+        uses: actions/cache@v2
+        with:
+          path: ~/.shivammathur
+          key: ${{ runner.os }}-php-setup-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-setup-
+
+      - name: Setup PHP 8.2 WITH Composer v2
+        if: steps.cache-php-setup.outputs.cache-hit != 'true'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+
+      - name: Validate Composer files
+        run: composer validate --no-check-all --ansi
+
+      - name: Cache Composer dependencies
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.composer/cache/files
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --no-scripts --no-interaction --prefer-dist
+
+      # —— Symfony 🎵 ——————————————————————————————————————————————————————————
+      - name: Verify database
+        run: |
+          php bin/console doctrine:database:create --env=test --if-not-exists
+          php bin/console doctrine:schema:create --env=test
+          php bin/console doctrine:fixtures:load -n --env=test
+        env:
+          DATABASE_URL: mysql://root:root@127.0.0.1:3303/oulfa
+
+      ## —— Coding standards ✨ ————————————————————————————————————————————————
+      - name: Coding standards checks (PHP CS Fixer)
+        run: composer run-script cs-fixer-ci
+
+
+      ## —— Tests ✅ ———————————————————————————————————————————————————————————
+      - name: Coding standards checks (PHPStan)
+        run: composer run-script phpstan
+
+      - name: Run test suite (PHPUnit)
+        run:  COMPOSER_MEMORY_LIMIT=-1 composer run-script test
+        env:
+          DATABASE_URL: mysql://root:root@127.0.0.1:3303/oulfa

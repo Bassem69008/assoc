@@ -34,6 +34,6 @@ final class DefaultControllerTest extends WebTestCase
 
     public function getSecureUrls(): \Generator
     {
-        yield ['/admin/'];
+        yield ['/admin'];
     }
 }
