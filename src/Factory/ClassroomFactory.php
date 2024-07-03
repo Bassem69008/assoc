@@ -66,7 +66,7 @@ final class ClassroomFactory extends ModelFactory
             'name' => self::faker()->randomElement(['classe1', 'classe2', 'classe3']),
             'startHour' => new \DateTime(self::faker()->time('H:i:s')),
             'endHour' => new \DateTime(self::faker()->time('H:i:s')),
-            'teacher' => TeacherFactory::random(),
+            'subjects' => SubjectFactory::randomRange(1, 5),
         ];
     }
 

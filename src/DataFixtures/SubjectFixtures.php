@@ -2,22 +2,22 @@
 
 namespace App\DataFixtures;
 
-use App\Factory\ClassroomFactory;
+use App\Factory\SubjectFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class ClassroomFixtures extends Fixture implements DependentFixtureInterface
+class SubjectFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
-        ClassroomFactory::createMany(3);
+        SubjectFactory::createMany(10);
     }
 
-    public function getDependencies(): array
+    public function getDependencies()
     {
         return [
-            SubjectFixtures::class,
+            TeacherFixtures::class,
         ];
     }
 }

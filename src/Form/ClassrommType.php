@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Classroom;
-use App\Entity\Teacher;
+use App\Entity\Subject;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,13 +21,15 @@ class ClassrommType extends AbstractType
             ->add('endHour', null, [
                 'widget' => 'single_text',
             ])
-            ->add('teacher', EntityType::class, [
-                'class' => Teacher::class,
-                'choice_label' => function (Teacher $teacher) {
-                    return \sprintf('%s %s', $teacher->getFirstName(), $teacher->getLastName());
-                },
-                'label' => 'Enseignant',
-                'attr' => ['class' => 'form-control'],
+
+            ->add('subjects', EntityType::class, [
+                'class' => Subject::class,
+                'label' => 'Matières',
+                'choice_label' => 'name',
+                'multiple' => true,
+                'expanded' => false,
+                'by_reference' => false,
+                'attr' => ['class' => 'form-control classroom_subjects'],
             ])
         ;
     }

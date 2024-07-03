@@ -33,7 +33,7 @@ class ClassroomController extends AbstractController
     public function show(?Classroom $classroom = null): Response
     {
         if (!$classroom) {
-            return $this->redirectToRoute('teacher_index');
+            return $this->redirectToRoute('classroom_index');
         }
 
         return $this->render('admin/classroom/show.html.twig', [

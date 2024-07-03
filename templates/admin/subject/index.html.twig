@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Les Matières{% endblock %}
+{% block title_page %}
+    <h2 class="my-auto pl-5" xmlns:twig="http://www.w3.org/1999/html">
+        <i class="fa fa-users"></i>
+        Liste des Classes
+    </h2>
+{% endblock %}
+{% block body %}
+
+    <div class="container-fluid my-5 mx-auto p-5 bg-white ">
+        {% for flashMessage in app.session.flashbag.get('error') %}
+            {{ flashMessage }}
+        {% endfor %}
+        <div class="">
+            <a href="{{ path('subject_create') }}" class="btn btn-info text-white right-0 bottom-5 mb-2">
+                <i class="fa fa-plus"></i>
+                AJOUTER
+            </a>
+        </div>
+        {% set headers = ['id','Nom','Enseignant','Date de création', 'Edition'] %}
+        {% set rows = [] %}
+        {% for subject in subjects %}
+            {% set rows = rows|merge([{
+                'id': subject.id,
+                'name': subject.name,
+                'teacher': subject.teacher,
+                'createdAt': subject.createdAt|date('d-m-Y'),
+                'item': subject,
+                'delete_key':subject.name,
+                'delete_type': 'Matière',
+                'path_delete': path('subject_delete', {'id': subject.id}),
+                'path_show': path('subject_show', {'id': subject.id}),
+                'path_edit': path('subject_edit', {'id': subject.id})
+
+            }]) %}
+
+        {% endfor %}
+        <twig:table-listing
+
+                table_id='table-user'
+                headers='{{ headers }}'
+                rows='{{ rows }}'
+        />
+
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(document).ready(function() {
+            $('#table-user').DataTable({
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/French.json"
+                },
+                "pageLength": 10
+            });
+        });
+    </script>
+{% endblock %}
