@@ -33,16 +33,16 @@ class Teacher
     private ?string $phone = null;
 
     /**
-     * @var Collection<int, Classroom>
+     * @var Collection<int, Subject>
      */
-    #[ORM\OneToMany(targetEntity: Classroom::class, mappedBy: 'teacher')]
-    private Collection $classrooms;
+    #[ORM\OneToMany(targetEntity: Subject::class, mappedBy: 'teacher')]
+    private Collection $subjects;
 
     public function __construct()
     {
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
-        $this->classrooms = new ArrayCollection();
+        $this->subjects = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -111,32 +111,37 @@ class Teacher
     }
 
     /**
-     * @return Collection<int, Classroom>
+     * @return Collection<int, Subject>
      */
-    public function getClassrooms(): Collection
+    public function getSubjects(): Collection
     {
-        return $this->classrooms;
+        return $this->subjects;
     }
 
-    public function addClassroom(Classroom $classroom): static
+    public function addSubject(Subject $subject): static
     {
-        if (!$this->classrooms->contains($classroom)) {
-            $this->classrooms->add($classroom);
-            $classroom->setTeacher($this);
+        if (!$this->subjects->contains($subject)) {
+            $this->subjects->add($subject);
+            $subject->setTeacher($this);
         }
 
         return $this;
     }
 
-    public function removeClassroom(Classroom $classroom): static
+    public function removeSubject(Subject $subject): static
     {
-        if ($this->classrooms->removeElement($classroom)) {
+        if ($this->subjects->removeElement($subject)) {
             // set the owning side to null (unless already changed)
-            if ($classroom->getTeacher() === $this) {
-                $classroom->setTeacher(null);
+            if ($subject->getTeacher() === $this) {
+                $subject->setTeacher(null);
             }
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return \sprintf('%s %s', $this->firstName, $this->lastName);
     }
 }

@@ -1,17 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Création d'une Classe{% endblock %}
-{% block stylesheets %}
-    {{ parent() }}
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
-{% endblock %}
+{% block title %}Création d'une Matière{% endblock %}
 {% block title_page %}
     <h2 class="my-auto pl-5">
         <i class="fa fa-user"></i>
         {% if editMode %}
-            Modification d'une Classe
+            Modification d'une Matière
             {% else %}
-            Création d'une Classe
+            Création d'une Matière
         {% endif %}
 
     </h2>
@@ -24,22 +20,15 @@
             <div class="col-lg-12">
         <div class="card">
             <div class="card-header bg-info m-0">
-                    <h2>Informations</h2>
             </div>
 
             <div class="card-body">
                 <div class="row">
-                    <div class="col-lg-4">
+                    <div class="col-lg-6">
                         {{ form_row(form.name) }}
                     </div>
-                    <div class="col-lg-4">
-                        {{ form_row(form.startHour) }}
-                    </div>
-                    <div class="col-lg-4">
-                        {{ form_row(form.endHour) }}
-                    </div>
-                    <div class="col">
-                        {{ form_row(form.subjects) }}
+                    <div class="col-lg-6">
+                        {{ form_row(form.teacher) }}
                     </div>
                 </div>
         </div>
